@@ -297,7 +297,7 @@ footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--tex
 
 <!-- Disclaimer -->
 <div class="disclaimer">
-  ⚠️ This is not an official Microsoft tool. All figures shown are purely estimates based on published documentation and assumptions. Actual costs depend on real-world usage patterns, negotiated pricing, and agent design. Do not use for contractual commitments.
+  ⚠️ INTERNAL USE ONLY — NOT FOR CUSTOMER DISTRIBUTION. This is not an official Microsoft tool. All figures are purely estimates based on published documentation and modeling assumptions. Do not share externally or use for contractual commitments.
 </div>
 
 <header>
@@ -584,6 +584,23 @@ footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--tex
     <div class="eff-stat"><div class="stat-num">86–99%</div><div class="stat-label">Eval Accuracy<br>(vs 40–87%)</div></div>
     <div class="eff-stat"><div class="stat-num">+29 pts</div><div class="stat-label">vs Competitor<br>(65% vs 36%)</div></div>
   </div>
+</div>
+
+<!-- Assumptions & Caveats -->
+<div class="section">
+  <div class="section-header"><span class="section-title">Assumptions & Caveats</span></div>
+  <ul class="footnotes-list">
+    <li><span class="fn-marker">A</span><span><strong>Standard harness credits include premium reasoning model costs</strong> (10 credits/1K tokens) on top of base feature rates. This reflects the requirement for reasoning to attempt complex scenarios. Without reasoning, Standard credit costs would be lower — but the agent would also be significantly less capable.</span></li>
+    <li><span class="fn-marker">B</span><span><strong>"Remaining manual labor" assumes all tasks still need to be completed.</strong> If Standard automates 40% of tasks, the other 60% still require human employees at the same loaded cost. This is realistic for most organizations but does not account for deprioritizing lower-value work.</span></li>
+    <li><span class="fn-marker">C</span><span><strong>Standard automation coverage % is an estimate, not a published metric.</strong> Microsoft does not publish "what % of scenarios Standard can handle." The defaults (Simple: 80%, Complex: 40%, Frontier: 10%) are based on architectural capabilities — Standard's rule-based orchestration cannot self-correct, manipulate files, or reason through novel paths. These are adjustable in the Advanced panel.</span></li>
+    <li><span class="fn-marker">D</span><span><strong>GHCP "~95%+ automation" assumes a well-designed agent.</strong> In practice, edge cases may still escalate to humans. However, the docs confirm GHCP "retries and finds alternative paths automatically," minimizing residual manual work. The $0 remaining manual shown is a best-case ceiling.</span></li>
+    <li><span class="fn-marker">E</span><span><strong>On Standard, equivalent business outcomes may require multiple billed interactions.</strong> Topic-based routing can require 2-3 exchanges where GHCP resolves in one agentic pass. This model assumes 1:1 interaction parity, which likely understates GHCP's effective cost efficiency.</span></li>
+    <li><span class="fn-marker">F</span><span><strong>Dev time grows non-linearly for Standard as complexity increases.</strong> Each new edge case requires an explicit topic path. The formulas used: GHCP weeks = 3 + (medium% × 0.05) + (heavy% × 0.11); Standard weeks = 8 + (medium% × 0.10) + (heavy% × 0.22). These are estimates, not published data.</span></li>
+    <li><span class="fn-marker">G</span><span><strong>GHCP credit tiers are ranges, not exact values.</strong> The official docs show Light: 100–300, Medium: 300–500, Heavy: >500 credits per task. This tool uses midpoints (200, 400, 600) which are adjustable. Actual consumption varies by agent design, knowledge sources, and tool calls.</span></li>
+    <li><span class="fn-marker">H</span><span><strong>M365 Copilot USL covers Standard harness features for B2E — but not GHCP.</strong> This is a confirmed, published fact. All GHCP usage is consumption-based regardless of license. This is the single largest cost-structure difference between the harnesses.</span></li>
+    <li><span class="fn-marker">I</span><span><strong>Rework rate and manual time estimates are organization-specific.</strong> The defaults (15% rework, 15/30/60 min per tier) reflect general knowledge-worker benchmarks. Your organization's actual values may differ significantly. Adjust in the inputs above.</span></li>
+    <li><span class="fn-marker">J</span><span><strong>This model does not capture opportunity cost.</strong> Employees spending time on tasks that could be automated are not available for higher-value work. This would further favor full automation (GHCP) but is too speculative to quantify here.</span></li>
+  </ul>
 </div>
 
 <!-- Considerations -->
