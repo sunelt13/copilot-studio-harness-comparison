@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copilot Studio: Standard vs GitHub Copilot Harness — Cost & Capability Comparison</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-subtle: #f8f9fa;
+  --bg-muted: #f0f2f5;
+  --border: #e1e4e8;
+  --border-strong: #d0d4da;
+  --text: #1a1a1a;
+  --text-secondary: #4a5568;
+  --text-muted: #6b7280;
+  --ms-blue: #0078d4;
+  --ms-blue-light: #e8f4fd;
+  --purple: #7c3aed;
+  --purple-light: #f3eeff;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --orange: #d97706;
+  --orange-light: #fffbeb;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --radius: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-subtle);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2rem;
+  line-height: 1.6;
+  font-size: 15px;
+}
+.container { max-width: 1320px; margin: 0 auto; }
+
+/* Header */
+header {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 2.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+header .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+
+/* Section */
+.section {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+/* Presets */
+.presets { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.preset-btn {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.preset-btn:hover { border-color: var(--ms-blue); color: var(--ms-blue); background: var(--ms-blue-light); }
+.preset-btn.active { border-color: var(--ms-blue); color: #fff; background: var(--ms-blue); }
+
+/* Inputs */
+.inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+}
+.input-group { display: flex; flex-direction: column; gap: 0.35rem; }
+.input-group label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.input-group input[type="number"] {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input-group input:focus { border-color: var(--ms-blue); box-shadow: 0 0 0 2px rgba(0,120,212,0.1); }
+
+/* Sliders */
+.slider-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.slider-header { display: flex; justify-content: space-between; align-items: baseline; }
+.slider-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.slider-value { font-size: 0.9rem; font-weight: 700; color: var(--ms-blue); }
+input[type="range"] {
+  width: 100%;
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--bg-muted);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--ms-blue);
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+/* Complexity Mix Section */
+.mix-section { margin-top: 1.5rem; }
+.mix-section .mix-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+.mix-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+}
+.mix-item { position: relative; }
+.mix-item .mix-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.mix-item .mix-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: help;
+}
+.mix-item.light .mix-label { color: var(--green); }
+.mix-item.medium .mix-label { color: var(--orange); }
+.mix-item.heavy .mix-label { color: var(--red); }
+.mix-item .info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--bg-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: help;
+  position: relative;
+}
+
+/* Tooltip */
+.tooltip-wrap { position: relative; display: inline-flex; }
+.tooltip-content {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  padding: 0.9rem 1rem;
+  background: var(--text);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.5;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  z-index: 100;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--text);
+}
+.tooltip-wrap:hover .tooltip-content { display: block; }
+.tooltip-content strong { color: #fff; display: block; margin-bottom: 0.3rem; font-size: 0.82rem; }
+.tooltip-content .tt-example { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.2); font-style: italic; opacity: 0.85; }
+
+/* Heavy display */
+.heavy-display {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  background: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s;
+}
+.heavy-display.active {
+  border-color: var(--red);
+  background: var(--red-light);
+}
+.heavy-display .heavy-num {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  min-width: 70px;
+  transition: color 0.2s;
+}
+.heavy-display.active .heavy-num { color: var(--red); }
+.heavy-display .heavy-info { flex: 1; }
+.heavy-display .heavy-info .heavy-title { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.heavy-display .heavy-info .heavy-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem; }
+.heavy-bar {
+  height: 6px;
+  background: var(--bg-muted);
+  border-radius: 3px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+.heavy-bar-fill {
+  height: 100%;
+  background: var(--red);
+  border-radius: 3px;
+  transition: width 0.3s;
+  width: 0%;
+}
+
+/* Advanced */
+.advanced-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.3rem 0;
+  border: none;
+  background: none;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+.advanced-toggle:hover { color: var(--ms-blue); }
+.advanced-panel { display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+.advanced-panel.open { display: block; }
+
+/* Cost Cards */
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.cost-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem 2rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: all 0.3s;
+}
+.cost-card .card-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.2rem;
+}
+.cost-card.standard .card-label { color: var(--ms-blue); }
+.cost-card.ghcp .card-label { color: var(--purple); }
+.cost-card .card-name { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+.cost-card .card-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+.cost-card .big-number {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.cost-card.standard .big-number { color: var(--ms-blue); }
+.cost-card.ghcp .big-number { color: var(--purple); }
+.cost-card .per-month { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+.cost-card .metrics { border-top: 1px solid var(--border); padding-top: 1rem; }
+.metric-line { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.85rem; }
+.metric-line .m-label { color: var(--text-muted); }
+.metric-line .m-value { font-weight: 600; color: var(--text); }
+.capability-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+}
+.badge-fail { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; }
+.badge-pass { background: var(--green-light); color: var(--green); border: 1px solid #a7f3d0; }
+
+/* Standard card red state */
+.cost-card.standard.not-feasible {
+  border-color: var(--red);
+  background: #fff5f5;
+  box-shadow: 0 0 0 1px rgba(220,38,38,0.1), var(--shadow-sm);
+}
+.cost-card.standard.not-feasible .big-number { color: var(--red); opacity: 0.5; }
+.not-feasible-overlay {
+  display: none;
+  position: absolute;
+  top: 12px; right: 12px;
+  padding: 0.4rem 0.75rem;
+  background: var(--red);
+  color: #fff;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cost-card.standard.not-feasible .not-feasible-overlay { display: block; }
+
+/* Capability Gap */
+.capability-gap {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--orange);
+  border-radius: var(--radius);
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s;
+}
+.capability-gap.heavy-active { border-left-color: var(--red); background: #fff8f8; }
+.capability-gap h3 { font-size: 1rem; font-weight: 700; color: var(--orange); margin-bottom: 0.5rem; }
+.capability-gap.heavy-active h3 { color: var(--red); }
+.capability-gap p { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+.heavy-warning {
+  display: none;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 2px solid var(--red);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--red);
+}
+.heavy-warning.visible { display: block; }
+.cap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 2rem;
+  margin-top: 1rem;
+}
+.cap-item { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0; }
+.cap-item .icon { font-weight: 700; flex-shrink: 0; }
+.cap-item .icon.yes { color: var(--green); }
+.cap-item .icon.no { color: var(--red); }
+
+/* Dev Time */
+.dev-grid { display: grid; grid-template-columns: 1fr 120px 1fr; gap: 1rem; align-items: center; }
+.dev-block { text-align: center; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); }
+.dev-block.standard-dev { background: var(--ms-blue-light); }
+.dev-block.ghcp-dev { background: var(--purple-light); }
+.dev-block .dev-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+.dev-block .dev-num { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+.dev-block.standard-dev .dev-num { color: var(--ms-blue); }
+.dev-block.ghcp-dev .dev-num { color: var(--purple); }
+.dev-block .dev-cost { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-top: 0.3rem; }
+.dev-block .dev-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4; }
+.savings-block { text-align: center; }
+.savings-block .save-num { font-size: 1.5rem; font-weight: 800; color: var(--green); }
+.savings-block .save-label { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; margin-top: 0.2rem; }
+.savings-block .save-item { margin-bottom: 0.75rem; }
+
+/* Dev block red state */
+.dev-block.standard-dev.not-feasible-dev {
+  background: var(--red-light);
+  border-color: var(--red);
+}
+.dev-block.standard-dev.not-feasible-dev .dev-num { color: var(--red); }
+.dev-block.standard-dev.not-feasible-dev .dev-note { color: var(--red); font-weight: 600; }
+
+/* Efficiency */
+.eff-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.eff-stat { text-align: center; padding: 1rem; border-radius: 8px; background: var(--purple-light); border: 1px solid #e9d5ff; }
+.eff-stat .stat-num { font-size: 1.5rem; font-weight: 800; color: var(--purple); }
+.eff-stat .stat-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+/* Sources */
+.sources-list { list-style: none; columns: 2; column-gap: 2rem; }
+.sources-list li { font-size: 0.78rem; color: var(--text-muted); padding: 0.25rem 0; break-inside: avoid; }
+.sources-list a { color: var(--ms-blue); text-decoration: none; }
+.sources-list a:hover { text-decoration: underline; }
+
+/* Footnotes */
+.footnotes-list { list-style: none; counter-reset: fn; }
+.footnotes-list li {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.75rem;
+  line-height: 1.5;
+}
+.footnotes-list li:last-child { border-bottom: none; }
+.fn-marker {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-muted);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem; }
+
+@media (max-width: 900px) {
+  .comparison-row { grid-template-columns: 1fr; }
+  .dev-grid { grid-template-columns: 1fr; }
+  .eff-row { grid-template-columns: 1fr 1fr; }
+  .cap-grid { grid-template-columns: 1fr; }
+  .mix-grid { grid-template-columns: 1fr; }
+  .sources-list { columns: 1; }
+  body { padding: 1rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Copilot Studio: Harness Comparison</h1>
+  <p class="subtitle">Standard Harness vs GitHub Copilot Harness — Monthly Consumption Cost & Development Time Analysis</p>
+</header>
+
+<!-- Configuration -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Scenario Configuration</span>
+    <div class="presets">
+      <button class="preset-btn" onclick="applyPreset('simple', this)">Simple Agent</button>
+      <button class="preset-btn active" onclick="applyPreset('complex', this)">Complex Agent</button>
+      <button class="preset-btn" onclick="applyPreset('frontier', this)">Frontier Agent</button>
+    </div>
+  </div>
+
+  <div class="inputs-grid">
+    <div class="input-group">
+      <label>Total Users</label>
+      <input type="number" id="totalUsers" value="50000" min="100" step="1000" oninput="calc()">
+    </div>
+    <div class="input-group">
+      <label>M365 Copilot Licensed</label>
+      <input type="number" id="m365Users" value="8000" min="0" step="500" oninput="calc()">
+    </div>
+    <div class="input-group">
+      <label>PayGo Discount %</label>
+      <input type="number" id="discount" value="20" min="0" max="50" step="5" oninput="calc()">
+    </div>
+    <div class="input-group">
+      <label>Interactions / User / Week</label>
+      <input type="number" id="interactionsWeek" value="4" min="1" max="30" step="1" oninput="calc()">
+    </div>
+    <div class="input-group">
+      <label>Dev Team Size</label>
+      <input type="number" id="devTeam" value="3" min="1" max="20" step="1" oninput="calc()">
+    </div>
+    <div class="input-group">
+      <label>Dev Hourly Rate ($)</label>
+      <input type="number" id="devRate" value="150" min="50" max="500" step="10" oninput="calc()">
+    </div>
+  </div>
+
+  <!-- Adoption Slider -->
+  <div style="margin-top: 1.5rem;">
+    <div class="slider-group">
+      <div class="slider-header">
+        <span class="slider-label">Active User Adoption</span>
+        <span class="slider-value" id="adoptionVal">30%</span>
+      </div>
+      <input type="range" id="adoptionSlider" min="5" max="100" value="30" step="5" oninput="calc()">
+    </div>
+  </div>
+
+  <!-- Complexity Mix -->
+  <div class="mix-section">
+    <div class="mix-title">GHCP Task Complexity Distribution</div>
+    <div class="mix-grid">
+      <div class="mix-item light">
+        <div class="mix-header">
+          <span class="mix-label">Light</span>
+          <div class="tooltip-wrap">
+            <span class="info-icon">?</span>
+            <div class="tooltip-content">
+              <strong>Light Agent Scenarios (100–300 credits)</strong>
+              A handful of knowledge sources for light reasoning, usually producing one short deliverable.
+              <div class="tt-example">Example: "Check the latest daily-ops email, verify the workbook has a Daily Logs table, and post a status summary."</div>
+            </div>
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-value" id="lightVal">75%</span>
+          </div>
+          <input type="range" id="lightSlider" min="0" max="100" value="75" step="5" oninput="calc()">
+        </div>
+      </div>
+
+      <div class="mix-item medium">
+        <div class="mix-header">
+          <span class="mix-label">Medium</span>
+          <div class="tooltip-wrap">
+            <span class="info-icon">?</span>
+            <div class="tooltip-content">
+              <strong>Medium Agent Scenarios (300–500 credits)</strong>
+              References many sources over varying timeframes, uses structured reasoning, and produces multiple deliverables.
+              <div class="tt-example">Example: "Compile an end-of-day operations summary — total entries logged, any flagged items — and post it to the channel."</div>
+            </div>
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-value" id="mediumVal">25%</span>
+          </div>
+          <input type="range" id="mediumSlider" min="0" max="100" value="25" step="5" oninput="calc()">
+        </div>
+      </div>
+
+      <div class="mix-item heavy">
+        <div class="mix-header">
+          <span class="mix-label">Heavy</span>
+          <div class="tooltip-wrap">
+            <span class="info-icon">?</span>
+            <div class="tooltip-content">
+              <strong>Heavy Agent Scenarios (>500 credits)</strong>
+              Requires deep analysis and broad source aggregation over long time frames, generating many outputs. These are the most complex tasks.
+              <div class="tt-example">Example: "Run a multi-year compliance audit — recompute daily figures, flag exceedances, correlate against logs, write a full report, and distribute via SharePoint, Teams, and email."</div>
+            </div>
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-value" id="heavySliderVal">0%</span>
+          </div>
+          <input type="range" id="heavySlider" min="0" max="100" value="0" step="5" disabled style="opacity: 0.5;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Heavy Prominent Display -->
+    <div class="heavy-display" id="heavyDisplay">
+      <div class="heavy-num" id="heavyBigNum">0%</div>
+      <div class="heavy-info">
+        <div class="heavy-title">Heavy Mix (auto-calculated from remainder)</div>
+        <div class="heavy-desc">* The most complex work tasks — deep reasoning, broad aggregation, multi-file document generation, long-horizon process automation. These scenarios are <strong>not achievable</strong> on the Standard harness.</div>
+        <div class="heavy-bar"><div class="heavy-bar-fill" id="heavyBarFill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced -->
+  <button class="advanced-toggle" onclick="toggleAdvanced()">▸ Advanced Model Assumptions</button>
+  <div class="advanced-panel" id="advancedPanel">
+    <div class="inputs-grid">
+      <div class="input-group">
+        <label>Std Credits / Interaction (incl. reasoning)</label>
+        <input type="number" id="stdCreditsPerInt" value="50" min="1" max="200" step="1" oninput="calc()">
+      </div>
+      <div class="input-group">
+        <label>GHCP Light Midpoint (credits)</label>
+        <input type="number" id="ghcpLightMid" value="200" min="50" max="400" step="25" oninput="calc()">
+      </div>
+      <div class="input-group">
+        <label>GHCP Medium Midpoint (credits)</label>
+        <input type="number" id="ghcpMedMid" value="400" min="200" max="600" step="25" oninput="calc()">
+      </div>
+      <div class="input-group">
+        <label>GHCP Heavy Midpoint (credits)</label>
+        <input type="number" id="ghcpHeavyMid" value="600" min="400" max="1000" step="50" oninput="calc()">
+      </div>
+    </div>
+    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem;">Dev time is now dynamically calculated from complexity mix. Override below if needed:</p>
+    <div class="inputs-grid" style="margin-top: 0.75rem;">
+      <div class="input-group">
+        <label>Override: Std Build Weeks (0 = auto)</label>
+        <input type="number" id="stdWeeksOverride" value="0" min="0" max="52" step="1" oninput="calc()">
+      </div>
+      <div class="input-group">
+        <label>Override: GHCP Build Weeks (0 = auto)</label>
+        <input type="number" id="ghcpWeeksOverride" value="0" min="0" max="26" step="1" oninput="calc()">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cost Comparison -->
+<div class="comparison-row">
+  <div class="cost-card standard" id="stdCard">
+    <div class="not-feasible-overlay" id="notAchievableLabel">Not Feasible</div>
+    <span class="card-label">Standard Harness</span>
+    <p class="card-name">Deterministic Orchestration</p>
+    <p class="card-desc">Rule-based topics, structured paths — best for predictable, well-defined scenarios</p>
+    <div class="big-number" id="stdCostBig">$38,409</div>
+    <div class="per-month">estimated monthly cost</div>
+    <div class="metrics">
+      <div class="metric-line"><span class="m-label">M365 Users (included)</span><span class="m-value" id="stdM365">2,400 → $0</span></div>
+      <div class="metric-line"><span class="m-label">Billable Users</span><span class="m-value" id="stdBillable">12,600</span></div>
+      <div class="metric-line"><span class="m-label">Monthly Interactions</span><span class="m-value" id="stdInt">218,232</span></div>
+      <div class="metric-line"><span class="m-label">Credits / Interaction ¹</span><span class="m-value" id="stdCPI">50</span></div>
+      <div class="metric-line"><span class="m-label">Monthly Credits</span><span class="m-value" id="stdTotalCr">4.8M</span></div>
+      <div class="metric-line"><span class="m-label">Cost / Active User / Mo</span><span class="m-value" id="stdPerUser">$2.56</span></div>
+    </div>
+    <div class="capability-badge badge-fail" id="stdBadge">✗ Complex agentic scenario — degraded or partial delivery</div>
+  </div>
+
+  <div class="cost-card ghcp">
+    <span class="card-label">GitHub Copilot Harness</span>
+    <p class="card-name">Agentic Reasoning Loop</p>
+    <p class="card-desc">Plans, executes, recovers, iterates — autonomous multi-step processes</p>
+    <div class="big-number" id="ghcpCostBig">$519,600</div>
+    <div class="per-month">estimated monthly cost</div>
+    <div class="metrics">
+      <div class="metric-line"><span class="m-label">M365 Users (still pay)</span><span class="m-value" id="ghcpM365">2,400 → consumption</span></div>
+      <div class="metric-line"><span class="m-label">Total Billable</span><span class="m-value" id="ghcpBillable">15,000 (all pay)</span></div>
+      <div class="metric-line"><span class="m-label">Monthly Interactions</span><span class="m-value" id="ghcpInt">259,800</span></div>
+      <div class="metric-line"><span class="m-label">Avg Credits / Task</span><span class="m-value" id="ghcpCPI">250 (weighted)</span></div>
+      <div class="metric-line"><span class="m-label">Monthly Credits</span><span class="m-value" id="ghcpTotalCr">65.0M</span></div>
+      <div class="metric-line"><span class="m-label">Cost / Active User / Mo</span><span class="m-value" id="ghcpPerUser">$34.64</span></div>
+    </div>
+    <div class="capability-badge badge-pass">✓ Full scenario delivered — agentic, multi-step, self-healing</div>
+  </div>
+</div>
+
+<!-- Capability Gap -->
+<div class="capability-gap" id="capGap">
+  <h3 id="capTitle">⚠ The Real Cost of "Cheap" — Capability Gap</h3>
+  <p>The Standard harness excels at <strong>deterministic, rule-based agents</strong> — FAQ bots, form fills, routing, structured conversations. That's genuinely its strength and best use case.</p>
+  <p>For complex agentic scenarios, the "true cost" of Standard isn't the credit bill — it's the <strong>cost of not having the capability at all</strong>: manual workarounds, failed automations, and processes that cannot run.</p>
+  
+  <div class="heavy-warning" id="heavyWarning">
+    🚨 <strong>Heavy scenarios are in the mix.</strong> This class of work — deep reasoning, multi-file generation, broad source aggregation — is <em>architecturally impossible</em> on the Standard harness regardless of budget or development time. There is no workaround.
+  </div>
+
+  <div class="cap-grid">
+    <div class="cap-item"><span class="icon no">✗</span><span>Multi-step reasoning with self-correction</span></div>
+    <div class="cap-item"><span class="icon yes">✓</span><span>GHCP: Autonomous plan → execute → recover</span></div>
+    <div class="cap-item"><span class="icon no">✗</span><span>File creation (Word, Excel, PPT, PDF)</span></div>
+    <div class="cap-item"><span class="icon yes">✓</span><span>GHCP: Native file manipulation</span></div>
+    <div class="cap-item"><span class="icon no">✗</span><span>Autonomous tool orchestration (MCP/connectors)</span></div>
+    <div class="cap-item"><span class="icon yes">✓</span><span>GHCP: Full agentic tool calling + fallback</span></div>
+    <div class="cap-item"><span class="icon no">✗</span><span>Cross-session memory & reusable skills</span></div>
+    <div class="cap-item"><span class="icon yes">✓</span><span>GHCP: Persistent memory + SKILL.md imports</span></div>
+    <div class="cap-item"><span class="icon no">✗</span><span>Recovery from failures (stuck on failure path)</span></div>
+    <div class="cap-item"><span class="icon yes">✓</span><span>GHCP: Retries, alternative paths, self-healing</span></div>
+    <div class="cap-item"><span class="icon no">✗</span><span>Reasoning models (deep multi-step inference)</span></div>
+    <div class="cap-item"><span class="icon yes">✓</span><span>GHCP: Latest chat + reasoning models</span></div>
+  </div>
+</div>
+
+<!-- Dev Time -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Development Time & Cost Savings</span>
+    <span style="font-size: 0.8rem; color: var(--text-muted);" id="devTeamLabel">3 developers × $150/hr</span>
+  </div>
+  <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.25rem;">Build time scales with complexity — more Heavy tasks = longer architecture and testing. Standard harness build time grows disproportionately because every complexity path must be manually encoded.</p>
+  <div class="dev-grid">
+    <div class="dev-block standard-dev" id="stdDevBlock">
+      <div class="dev-label">Standard Harness</div>
+      <div class="dev-num" id="stdWeeksDisp">11 wks</div>
+      <div class="dev-cost" id="stdDevCost">$198,000</div>
+      <div class="dev-note" id="stdDevNote">Manual routing, hard-coded fallbacks, brittle topics<br>Result: Partial / degraded capability</div>
+    </div>
+    <div class="savings-block">
+      <div class="save-item">
+        <div class="save-num" id="savedMoney">−$90K</div>
+        <div class="save-label">Dev Cost Saved</div>
+      </div>
+      <div class="save-item">
+        <div class="save-num" id="savedWeeks">−6 wks</div>
+        <div class="save-label">Faster to Value</div>
+      </div>
+      <div class="save-item">
+        <div class="save-num" id="savedPct" style="color: var(--orange);">55%</div>
+        <div class="save-label">Faster Delivery</div>
+      </div>
+    </div>
+    <div class="dev-block ghcp-dev">
+      <div class="dev-label">GitHub Copilot Harness</div>
+      <div class="dev-num" id="ghcpWeeksDisp">5 wks</div>
+      <div class="dev-cost" id="ghcpDevCost">$90,000</div>
+      <div class="dev-note">Agentic loop handles routing natively<br>Result: Full capability delivered</div>
+    </div>
+  </div>
+</div>
+
+<!-- Efficiency -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">GitHub Copilot Harness — Efficiency Benchmarks</span>
+  </div>
+  <div class="eff-row">
+    <div class="eff-stat"><div class="stat-num">−45%</div><div class="stat-label">Input Tokens<br>(26.5K vs 47.8K)</div></div>
+    <div class="eff-stat"><div class="stat-num">+12–48 pts</div><div class="stat-label">Quality Score<br>Improvement</div></div>
+    <div class="eff-stat"><div class="stat-num">86–99%</div><div class="stat-label">Eval Accuracy<br>(vs 40–87%)</div></div>
+    <div class="eff-stat"><div class="stat-num">+29 pts</div><div class="stat-label">vs Competitor<br>(65% vs 36%)</div></div>
+  </div>
+</div>
+
+<!-- Considerations -->
+<div class="section">
+  <div class="section-header"><span class="section-title">Methodology Considerations</span></div>
+  <ul class="footnotes-list">
+    <li><span class="fn-marker">1</span><span>Standard harness credits include premium reasoning model costs (10 credits/1K tokens) on top of base feature rates. This reflects the requirement for reasoning capability to attempt complex scenarios. Without reasoning, Standard costs would be lower — but the agent would also be significantly less capable, widening the capability gap.</span></li>
+    <li><span class="fn-marker">2</span><span>On the Standard harness, the same business outcome may require multiple user interactions (each billed separately) if the agent cannot resolve a request in a single pass due to its topic-based routing. The GitHub Copilot harness's agentic loop typically resolves equivalent outcomes in a single task invocation. This model assumes 1:1 interaction parity, which likely understates GHCP's effective cost efficiency.</span></li>
+    <li><span class="fn-marker">3</span><span>As agent complexity increases, Standard development cost grows non-linearly due to combinatorial topic-path explosion. Each new edge case or failure mode requires explicit handling by the development team. The GitHub Copilot harness handles edge cases natively through its reasoning loop, keeping development effort closer to linear.</span></li>
+    <li><span class="fn-marker">4</span><span>GHCP's 45% input-token efficiency advantage compounds at scale — at higher interaction volumes, the orchestration overhead saved per task accumulates into meaningful credit reduction vs. what a comparable Standard build would require for equivalent reasoning depth.</span></li>
+    <li><span class="fn-marker">5</span><span>M365 Copilot USL inclusion covers all Standard harness features for employee-facing (B2E) scenarios at no incremental credit cost. This benefit does not extend to the GitHub Copilot harness — all users consume credits regardless of license. Organizations should weigh this against the capability gap for their specific use case.</span></li>
+  </ul>
+</div>
+
+<!-- Sources -->
+<div class="section">
+  <div class="section-header"><span class="section-title">Sources & References</span></div>
+  <ul class="sources-list">
+    <li>Standard billing — <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management" target="_blank">Billing rates (Aug 2026)</a></li>
+    <li>GHCP billing — <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/billing-credit-overview" target="_blank">Usage-based billing (Aug 2026)</a></li>
+    <li>Harness comparison — <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/harnesses-overview" target="_blank">Choose a harness (Jul 2026)</a></li>
+    <li>Estimator — <a href="https://microsoft.github.io/copilot-studio-estimator/" target="_blank">microsoft.github.io</a></li>
+    <li>GHCP tiers: Light 100–300, Medium 300–500, Heavy >500 (official docs)</li>
+    <li>Standard rates: Classic (1), Gen (2), Action (5), Graph (10), Flow/100 (13)</li>
+    <li>Base PayGo: $0.01/credit; discount applied per customer negotiation</li>
+    <li>M365 USL: Standard features at no charge for B2E; GHCP = consumption-only</li>
+  </ul>
+</div>
+
+<footer>
+  Prepared by Microsoft — Low Code Solution Engineering | August 2026<br>
+  Informational estimate only. Actual costs vary. <a href="https://microsoft.github.io/copilot-studio-estimator/" style="color: var(--ms-blue);">Official estimator →</a>
+</footer>
+
+</div>
+
+<script>
+const WEEKS_PER_MONTH = 4.33;
+
+const PRESETS = {
+  simple: { totalUsers: 50000, m365Users: 8000, discount: 20, interactionsWeek: 2, adoption: 50, light: 100, medium: 0, stdCreditsPerInt: 12, ghcpLightMid: 150, ghcpMedMid: 350, ghcpHeavyMid: 600 },
+  complex: { totalUsers: 50000, m365Users: 8000, discount: 20, interactionsWeek: 4, adoption: 30, light: 75, medium: 25, stdCreditsPerInt: 50, ghcpLightMid: 200, ghcpMedMid: 400, ghcpHeavyMid: 600 },
+  frontier: { totalUsers: 50000, m365Users: 8000, discount: 20, interactionsWeek: 6, adoption: 30, light: 30, medium: 40, stdCreditsPerInt: 80, ghcpLightMid: 200, ghcpMedMid: 400, ghcpHeavyMid: 750 }
+};
+
+function applyPreset(name, btn) {
+  const p = PRESETS[name];
+  document.getElementById('totalUsers').value = p.totalUsers;
+  document.getElementById('m365Users').value = p.m365Users;
+  document.getElementById('discount').value = p.discount;
+  document.getElementById('interactionsWeek').value = p.interactionsWeek;
+  document.getElementById('adoptionSlider').value = p.adoption;
+  document.getElementById('lightSlider').value = p.light;
+  document.getElementById('mediumSlider').value = p.medium;
+  document.getElementById('stdCreditsPerInt').value = p.stdCreditsPerInt;
+  document.getElementById('ghcpLightMid').value = p.ghcpLightMid;
+  document.getElementById('ghcpMedMid').value = p.ghcpMedMid;
+  document.getElementById('ghcpHeavyMid').value = p.ghcpHeavyMid;
+  document.getElementById('stdWeeksOverride').value = 0;
+  document.getElementById('ghcpWeeksOverride').value = 0;
+  document.getElementById('devTeam').value = 3;
+  document.getElementById('devRate').value = 150;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  calc();
+}
+
+function toggleAdvanced() {
+  const panel = document.getElementById('advancedPanel');
+  const btn = document.querySelector('.advanced-toggle');
+  panel.classList.toggle('open');
+  btn.textContent = panel.classList.contains('open') ? '▾ Advanced Model Assumptions' : '▸ Advanced Model Assumptions';
+}
+
+function fmt(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return Math.round(n).toLocaleString();
+  return n.toString();
+}
+function fmtCurrency(n) {
+  if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function calcDevWeeks(medPct, hvyPct) {
+  // GHCP: base 3 weeks + scaling with complexity
+  // Architecture must accommodate the hardest tier present
+  const ghcp = Math.max(3, Math.ceil(3 + (medPct / 100) * 5 + (hvyPct / 100) * 11));
+  
+  // Standard: higher baseline + steeper scaling (rule-based = exponentially harder for complexity)
+  const std = Math.max(8, Math.ceil(8 + (medPct / 100) * 10 + (hvyPct / 100) * 22));
+  
+  return { ghcp, std };
+}
+
+function calc() {
+  const totalUsers = parseInt(document.getElementById('totalUsers').value) || 50000;
+  const m365Users = Math.min(parseInt(document.getElementById('m365Users').value) || 0, totalUsers);
+  const nonM365 = totalUsers - m365Users;
+  const discountPct = parseInt(document.getElementById('discount').value) || 0;
+  const creditRate = 0.01 * (1 - discountPct / 100);
+  const devTeam = parseInt(document.getElementById('devTeam').value) || 3;
+  const devRate = parseInt(document.getElementById('devRate').value) || 150;
+  const intPerWeek = parseInt(document.getElementById('interactionsWeek').value) || 4;
+  const adoption = parseInt(document.getElementById('adoptionSlider').value) / 100;
+
+  let lightPct = parseInt(document.getElementById('lightSlider').value);
+  let mediumPct = parseInt(document.getElementById('mediumSlider').value);
+  if (lightPct + mediumPct > 100) { mediumPct = 100 - lightPct; document.getElementById('mediumSlider').value = mediumPct; }
+  const heavyPct = Math.max(0, 100 - lightPct - mediumPct);
+
+  const stdCreditsPerInt = parseInt(document.getElementById('stdCreditsPerInt').value) || 22;
+  const ghcpLightMid = parseInt(document.getElementById('ghcpLightMid').value) || 200;
+  const ghcpMedMid = parseInt(document.getElementById('ghcpMedMid').value) || 400;
+  const ghcpHeavyMid = parseInt(document.getElementById('ghcpHeavyMid').value) || 600;
+
+  // Update slider displays
+  document.getElementById('adoptionVal').textContent = Math.round(adoption * 100) + '%';
+  document.getElementById('lightVal').textContent = lightPct + '%';
+  document.getElementById('mediumVal').textContent = mediumPct + '%';
+  document.getElementById('heavySliderVal').textContent = heavyPct + '%';
+  document.getElementById('heavyBigNum').textContent = heavyPct + '%';
+  document.getElementById('heavyBarFill').style.width = heavyPct + '%';
+
+  // Heavy display state
+  const heavyDisplay = document.getElementById('heavyDisplay');
+  if (heavyPct > 0) { heavyDisplay.classList.add('active'); } else { heavyDisplay.classList.remove('active'); }
+
+  // Standard calc
+  const stdActiveM365 = Math.round(m365Users * adoption);
+  const stdActiveNonM365 = Math.round(nonM365 * adoption);
+  const stdTotalActive = stdActiveM365 + stdActiveNonM365;
+  const stdBillableInt = stdActiveNonM365 * intPerWeek * WEEKS_PER_MONTH;
+  const stdMonthlyCredits = stdBillableInt * stdCreditsPerInt;
+  const stdMonthlyCost = stdMonthlyCredits * creditRate;
+  const stdPerUser = stdTotalActive > 0 ? stdMonthlyCost / stdTotalActive : 0;
+
+  // GHCP calc
+  const ghcpTotalActive = Math.round(totalUsers * adoption);
+  const ghcpInt = ghcpTotalActive * intPerWeek * WEEKS_PER_MONTH;
+  const ghcpAvgCredits = (lightPct / 100) * ghcpLightMid + (mediumPct / 100) * ghcpMedMid + (heavyPct / 100) * ghcpHeavyMid;
+  const ghcpMonthlyCredits = ghcpInt * ghcpAvgCredits;
+  const ghcpMonthlyCost = ghcpMonthlyCredits * creditRate;
+  const ghcpPerUser = ghcpTotalActive > 0 ? ghcpMonthlyCost / ghcpTotalActive : 0;
+
+  // Update Standard card
+  document.getElementById('stdCostBig').textContent = fmtCurrency(stdMonthlyCost);
+  document.getElementById('stdM365').textContent = fmt(stdActiveM365) + ' → $0';
+  document.getElementById('stdBillable').textContent = fmt(stdActiveNonM365);
+  document.getElementById('stdInt').textContent = fmt(Math.round(stdBillableInt));
+  document.getElementById('stdCPI').textContent = stdCreditsPerInt;
+  document.getElementById('stdTotalCr').textContent = fmt(stdMonthlyCredits);
+  document.getElementById('stdPerUser').textContent = '$' + stdPerUser.toFixed(2);
+
+  // Update GHCP card
+  document.getElementById('ghcpCostBig').textContent = fmtCurrency(ghcpMonthlyCost);
+  document.getElementById('ghcpM365').textContent = fmt(Math.round(m365Users * adoption)) + ' → consumption';
+  document.getElementById('ghcpBillable').textContent = fmt(ghcpTotalActive) + ' (all pay)';
+  document.getElementById('ghcpInt').textContent = fmt(Math.round(ghcpInt));
+  document.getElementById('ghcpCPI').textContent = Math.round(ghcpAvgCredits) + ' (weighted)';
+  document.getElementById('ghcpTotalCr').textContent = fmt(ghcpMonthlyCredits);
+  document.getElementById('ghcpPerUser').textContent = '$' + ghcpPerUser.toFixed(2);
+
+  // Standard card red state when Heavy > 0 or frontier-level complexity
+  const stdCard = document.getElementById('stdCard');
+  const stdDevBlock = document.getElementById('stdDevBlock');
+  if (heavyPct > 0) {
+    stdCard.classList.add('not-feasible');
+    stdDevBlock.classList.add('not-feasible-dev');
+    document.getElementById('stdBadge').textContent = '✗ Scenario NOT achievable — requires agentic capabilities';
+    document.getElementById('stdDevNote').innerHTML = 'Scenario cannot be fully built on this harness<br><strong>Architecture does not support this complexity</strong>';
+  } else {
+    stdCard.classList.remove('not-feasible');
+    stdDevBlock.classList.remove('not-feasible-dev');
+    document.getElementById('stdBadge').textContent = '✗ Complex agentic scenario — degraded or partial delivery';
+    document.getElementById('stdDevNote').innerHTML = 'Manual routing, hard-coded fallbacks, brittle topics<br>Result: Partial / degraded capability';
+  }
+
+  // Capability gap
+  const capGap = document.getElementById('capGap');
+  const heavyWarning = document.getElementById('heavyWarning');
+  if (heavyPct > 0) {
+    capGap.classList.add('heavy-active');
+    heavyWarning.classList.add('visible');
+  } else {
+    capGap.classList.remove('heavy-active');
+    heavyWarning.classList.remove('visible');
+  }
+
+  // Dev time (dynamic)
+  const devWeeks = calcDevWeeks(mediumPct, heavyPct);
+  let ghcpWks = devWeeks.ghcp;
+  let stdWks = devWeeks.std;
+
+  // Allow overrides
+  const stdOverride = parseInt(document.getElementById('stdWeeksOverride').value) || 0;
+  const ghcpOverride = parseInt(document.getElementById('ghcpWeeksOverride').value) || 0;
+  if (stdOverride > 0) stdWks = stdOverride;
+  if (ghcpOverride > 0) ghcpWks = ghcpOverride;
+
+  const stdDevCost = devTeam * devRate * 40 * stdWks;
+  const ghcpDevCost = devTeam * devRate * 40 * ghcpWks;
+  const savedDev = stdDevCost - ghcpDevCost;
+  const savedWksVal = stdWks - ghcpWks;
+  const savedPctVal = stdWks > 0 ? Math.round((savedWksVal / stdWks) * 100) : 0;
+
+  document.getElementById('devTeamLabel').textContent = devTeam + ' developers × $' + devRate + '/hr';
+  document.getElementById('stdWeeksDisp').textContent = stdWks + ' wks';
+  document.getElementById('ghcpWeeksDisp').textContent = ghcpWks + ' wks';
+  document.getElementById('stdDevCost').textContent = fmtCurrency(stdDevCost);
+  document.getElementById('ghcpDevCost').textContent = fmtCurrency(ghcpDevCost);
+  document.getElementById('savedMoney').textContent = '−' + fmtCurrency(savedDev);
+  document.getElementById('savedWeeks').textContent = '−' + savedWksVal + ' wks';
+  document.getElementById('savedPct').textContent = savedPctVal + '%';
+}
+
+calc();
+</script>
+</body>
+</html>
