@@ -153,6 +153,12 @@ input[type="range"]::-webkit-slider-thumb {
 .val-badge.worst { background: var(--red-light); color: var(--red); }
 .val-badge.mid { background: var(--orange-light); color: var(--orange); }
 .val-badge.best { background: var(--green-light); color: var(--green); }
+.val-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.6rem; font-style: italic; line-height: 1.4; }
+.val-note strong { color: var(--text-secondary); font-style: normal; }
+.val-split-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; margin-top: 0.6rem; }
+.val-split-bar .split-credits { background: var(--ms-blue); transition: width 0.3s; }
+.val-split-bar .split-manual { background: var(--orange); transition: width 0.3s; }
+.breakdown-highlight { color: var(--orange) !important; font-weight: 700 !important; }
 
 /* Bar chart */
 .value-bars { margin-top: 1rem; }
@@ -369,7 +375,7 @@ footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--tex
   <div class="value-col manual">
     <div class="val-label">Manual (No AI)</div>
     <div class="val-big" id="manualTotalCost">$5.4M</div>
-    <div class="val-sub">total monthly cost</div>
+    <div class="val-sub">total cost to achieve this workload</div>
     <div class="val-breakdown">
       <div><span>Employee labor</span><span class="breakdown-val" id="manualLaborVal">$5.4M</span></div>
       <div><span>Rework overhead</span><span class="breakdown-val" id="manualReworkVal">$810K</span></div>
@@ -381,19 +387,21 @@ footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--tex
   <div class="value-col std-val">
     <div class="val-label">Standard Harness</div>
     <div class="val-big" id="stdTotalCostVal">$2.3M</div>
-    <div class="val-sub">total monthly cost</div>
+    <div class="val-sub">total cost to achieve this workload</div>
     <div class="val-breakdown">
-      <div><span>Credit cost</span><span class="breakdown-val" id="stdCreditsVal">$87K</span></div>
-      <div><span>Remaining manual labor</span><span class="breakdown-val" id="stdRemainingVal">$2.2M</span></div>
+      <div><span>AI platform (credits)</span><span class="breakdown-val" id="stdCreditsVal" style="color: var(--ms-blue);">$87K</span></div>
+      <div><span>⚠ Remaining manual labor</span><span class="breakdown-val breakdown-highlight" id="stdRemainingVal">$2.80M</span></div>
       <div><span>Automation coverage</span><span class="breakdown-val" id="stdCoverageVal">40%</span></div>
     </div>
+    <div class="val-split-bar"><div class="split-credits" id="stdSplitCredits" style="width:3%;"></div><div class="split-manual" id="stdSplitManual" style="width:97%;"></div></div>
+    <div class="val-note"><strong>Only <span id="stdCreditPctNote">3%</span> of this cost is the AI platform.</strong> The remaining <span id="stdManualPctNote">97%</span> is employee labor for tasks Standard cannot automate.</div>
     <span class="val-badge mid" id="stdValBadge">Partial automation</span>
   </div>
 
   <div class="value-col ghcp-val">
     <div class="val-label">GitHub Copilot Harness</div>
     <div class="val-big" id="ghcpTotalCostVal">$519K</div>
-    <div class="val-sub">total monthly cost</div>
+    <div class="val-sub">total cost to achieve this workload</div>
     <div class="val-breakdown">
       <div><span>Credit cost</span><span class="breakdown-val" id="ghcpCreditsVal">$519K</span></div>
       <div><span>Remaining manual labor</span><span class="breakdown-val" id="ghcpRemainingVal">$0</span></div>
@@ -749,6 +757,14 @@ function calc() {
   document.getElementById('stdCreditsVal').textContent = fmtC(stdMonthlyCost);
   document.getElementById('stdRemainingVal').textContent = fmtC(stdRemainingManual);
   document.getElementById('stdCoverageVal').textContent = stdCoverage + '%';
+
+  // Split bar + percentage note
+  const stdCreditPct = stdTotalCostVal > 0 ? Math.round((stdMonthlyCost / stdTotalCostVal) * 100) : 0;
+  const stdManualPct = 100 - stdCreditPct;
+  document.getElementById('stdSplitCredits').style.width = Math.max(2, stdCreditPct) + '%';
+  document.getElementById('stdSplitManual').style.width = stdManualPct + '%';
+  document.getElementById('stdCreditPctNote').textContent = stdCreditPct + '%';
+  document.getElementById('stdManualPctNote').textContent = stdManualPct + '%';
 
   document.getElementById('ghcpTotalCostVal').textContent = fmtC(ghcpTotalCostVal);
   document.getElementById('ghcpCreditsVal').textContent = fmtC(ghcpMonthlyCost);
