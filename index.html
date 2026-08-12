@@ -427,8 +427,8 @@ footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--tex
     <div class="val-sub">total cost to achieve this workload</div>
     <div class="val-breakdown">
       <div><span>Credit cost</span><span class="breakdown-val" id="ghcpCreditsVal">$519K</span></div>
-      <div><span>Remaining manual labor</span><span class="breakdown-val" id="ghcpRemainingVal">$0</span></div>
-      <div><span>Automation coverage</span><span class="breakdown-val" style="color: var(--green);">~95%+</span></div>
+      <div><span>Remaining manual labor</span><span class="breakdown-val" id="ghcpRemainingVal" style="color: var(--text-muted);">$233K</span></div>
+      <div><span>Automation coverage</span><span class="breakdown-val" style="color: var(--green);">95%</span></div>
     </div>
     <span class="val-badge best">Lowest total cost</span>
   </div>
@@ -782,8 +782,9 @@ function calc() {
   const stdRemainingManual = manualLaborCost * (1 - stdCoverage / 100);
   const stdTotalCostVal = stdMonthlyCost + stdRemainingManual;
 
-  // GHCP total (credits only, ~full automation)
-  const ghcpTotalCostVal = ghcpMonthlyCost;
+  // GHCP total (credits + 5% remaining manual)
+  const ghcpRemainingManual = manualLaborCost * 0.05;
+  const ghcpTotalCostVal = ghcpMonthlyCost + ghcpRemainingManual;
 
   // ROI
   const netSavings = manualTotalCost - ghcpTotalCostVal;
@@ -810,7 +811,7 @@ function calc() {
 
   document.getElementById('ghcpTotalCostVal').textContent = fmtC(ghcpTotalCostVal);
   document.getElementById('ghcpCreditsVal').textContent = fmtC(ghcpMonthlyCost);
-  document.getElementById('ghcpRemainingVal').textContent = '$0';
+  document.getElementById('ghcpRemainingVal').textContent = fmtC(ghcpRemainingManual);
 
   // Bar chart
   const maxCost = manualTotalCost;
