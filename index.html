@@ -282,6 +282,29 @@ input[type="range"]::-webkit-slider-thumb {
 
 footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem; }
 
+/* Floating recalculate button */
+.float-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--ms-blue);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,120,212,0.35);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.float-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,120,212,0.45); }
+.float-btn:active { transform: translateY(0); }
+
 @media (max-width: 900px) {
   .comparison-row, .value-hero, .mix-grid { grid-template-columns: 1fr; }
   .dev-grid { grid-template-columns: 1fr; }
@@ -636,6 +659,8 @@ footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--tex
 </footer>
 
 </div>
+
+<button class="float-btn" onclick="calc(); document.querySelector('.value-hero').scrollIntoView({behavior:'smooth', block:'start'});">↑ Recalculate & View Results</button>
 
 <script>
 const WEEKS_PER_MONTH = 4.33;
